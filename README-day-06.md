@@ -44,7 +44,7 @@ reactome_downloader/
 2. User must also provide their email address when prompted.
 3. User then provides the Reactome Stable Identifier (e.g. R-HSA-199420).
 4. The program fetches the files from Reactome’s Content Service API or download server.
-5. The program creates a new parent folder on the user's desktop- "Reactome_Dwonloads" with folders for each Reactome Stable Identifier 
+5. The program creates a new parent folder on the user's desktop- "Reactome_Downloads" with folders for each Reactome Stable Identifier 
 6. This is followed by sub-folders for .json, .pdf and .png files.
 
 # Dependencies required
