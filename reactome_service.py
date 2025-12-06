@@ -1,59 +1,114 @@
 import requests
 from pathlib import Path
 
+
 class ReactomeService:
-    # Updated base URL
     BASE_URL = "https://reactome.org/ContentService"
 
-    def __init__(self, config):
-        self.email = config.get("contact_email", "")
-        self.desktop = Path.home() / "Desktop"
-        self.download_folder = self.desktop / "Reactome_Downloads"
+    def __init__(self, email: str, download_base=None):
+        self.email = email
+        self.download_folder = (
+            Path(download_base)
+            if download_base
+            else Path.home() / "Desktop" / "Reactome_Downloads"
+        )
         self.download_folder.mkdir(parents=True, exist_ok=True)
 
-    def get_pathway_folder(self, st_id):
-        """Create folder for a given pathway (stable ID)."""
-        folder = self.download_folder / st_id
+    # ---------------------------
+    # INTERNAL UTILITIES
+    # ---------------------------
+
+    def _headers(self):
+        return {"User-Agent": f"ReactomeDownloader/1.0 ({self.email})"}
+
+    def _make_subfolder(self, st_id: str, sub: str):
+        folder = self.download_folder / st_id / sub
         folder.mkdir(parents=True, exist_ok=True)
         return folder
 
-    def download_pathway_json(self, st_id, progress_callback=None):
-        """
-        Download Reactome pathway or event as JSON from the ContentService API.
-        `st_id` is stable identifier, like "R‑HSA‑199420" or any event ID.
-        """
+    # ---------------------------
+    # DOWNLOAD JSON
+    # ---------------------------
+
+    def download_json(self, st_id, progress_callback=None):
         url = f"{self.BASE_URL}/data/query/{st_id}"
-        headers = {"User-Agent": f"ReactomeDownloader/1.0 ({self.email})"}
-        resp = requests.get(url, headers=headers)
+        resp = requests.get(url, headers=self._headers())
+
         if resp.status_code != 200:
             if progress_callback:
-                progress_callback(f"Error: {resp.status_code} when downloading {st_id}")
+                progress_callback(f"[ERROR] JSON {st_id}: HTTP {resp.status_code}")
             return None
 
-        data = resp.json()
-        folder = self.get_pathway_folder(st_id)
-        filepath = folder / f"{st_id}.json"
+        folder = self._make_subfolder(st_id, "json")
+        path = folder / f"{st_id}.json"
 
-        with open(filepath, "w", encoding="utf-8") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(resp.text)
 
         if progress_callback:
-            progress_callback(f"Saved JSON for {st_id} to {filepath}")
-        return filepath
+            progress_callback(f"Saved JSON → {path}")
 
-    def download_database_version(self, progress_callback=None):
-        """
-        Download the current Reactome database version.
-        """
-        url = f"{self.BASE_URL}/data/database/version"
-        headers = {"User-Agent": f"ReactomeDownloader/1.0 ({self.email})"}
-        resp = requests.get(url, headers=headers)
+        return path
+
+    # ---------------------------
+    # DOWNLOAD PDF
+    # ---------------------------
+
+    def download_pdf(self, st_id, progress_callback=None):
+        url = f"{self.BASE_URL}/exporter/document/event/{st_id}.pdf"
+        resp = requests.get(url, headers=self._headers())
+
         if resp.status_code != 200:
             if progress_callback:
-                progress_callback(f"Error retrieving version: {resp.status_code}")
+                progress_callback(f"[ERROR] PDF {st_id}: HTTP {resp.status_code}")
             return None
 
-        version = resp.text.strip()
+        folder = self._make_subfolder(st_id, "pdf")
+        path = folder / f"{st_id}.pdf"
+
+        with open(path, "wb") as f:
+            f.write(resp.content)
+
         if progress_callback:
-            progress_callback(f"Reactome version: {version}")
-        return version
+            progress_callback(f"Saved PDF → {path}")
+
+        return path
+
+    # ---------------------------
+    # DOWNLOAD PNG
+    # ---------------------------
+
+    def download_png(self, st_id, progress_callback=None):
+        url = f"{self.BASE_URL}/exporter/diagram/{st_id}.png"
+        resp = requests.get(url, headers=self._headers())
+
+        if resp.status_code != 200:
+            if progress_callback:
+                progress_callback(f"[ERROR] PNG {st_id}: HTTP {resp.status_code}")
+            return None
+
+        folder = self._make_subfolder(st_id, "png")
+        path = folder / f"{st_id}.png"
+
+        with open(path, "wb") as f:
+            f.write(resp.content)
+
+        if progress_callback:
+            progress_callback(f"Saved PNG → {path}")
+
+        return path
+
+    # ---------------------------
+    # MAIN METHOD: DOWNLOAD ALL
+    # ---------------------------
+
+    def download_all(self, st_id, progress_callback=None):
+        if progress_callback:
+            progress_callback(f"=== Downloading assets for {st_id} ===")
+
+        self.download_json(st_id, progress_callback)
+        self.download_pdf(st_id, progress_callback)
+        self.download_png(st_id, progress_callback)
+
+        if progress_callback:
+            progress_callback(f"=== Completed downloads for {st_id} ===")
