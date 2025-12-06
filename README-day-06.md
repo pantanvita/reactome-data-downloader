@@ -2,8 +2,6 @@
 
 ## **About REACTOME [https://reactome.org/]**
 
-![reactome-logo](reactome-logo.png)
-
 REACTOME is an open-source, open access, manually curated and peer-reviewed pathway database.
 * Further details about Reactome, project inspiration, project structure in version 1.0, what was done previously etc. can be viewed on [Day-04-README](https://github.com/pantanvita/wis-python-2025/blob/main/day04/README-day-04.md)
 
