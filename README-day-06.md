@@ -1,11 +1,12 @@
 # **Day 06 assignment**
 
 ## **About REACTOME [https://reactome.org/]**
-
-REACTOME is an open-source, open access, manually curated and peer-reviewed pathway database.
+* Reactome is an open-source, open access, manually curated and peer-reviewed pathway database.
 * Further details about Reactome, project inspiration, project structure in version 1.0, what was done previously etc. can be viewed on [Day-04-README](https://github.com/pantanvita/wis-python-2025/blob/main/day04/README-day-04.md)
 
-## **REACTOME DATA DOWNLOADER v2.0**
+
+
+# **REACTOME DATA DOWNLOADER v2.0**
 
 The REACTOME DATA DOWNLOADER v2.0 is an upgrade over its previous version 1.0
 
