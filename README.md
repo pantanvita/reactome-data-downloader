@@ -22,9 +22,9 @@ The REACTOME DATA DOWNLOADER v2.0 is an upgrade over its previous version 1.0
 ## **Bugs fixed from previous version**
 
 * My reviewer in Day04 assignment Shoshana Sernik @shoshisernik had pointed out that she could not store her email in a separate config file for API calls.
-* Liron Hoffman @liroh99 had suggested to remove the config.json file from .gitignore
+* Liron Hoffman @liroh99 had suggested to remove the config.json file from .gitignore (A big thank you for the helpful suggestion..!!)
 * Following her suggestion, I removed the config.json file from .gitignore
-* The users can now view it when cloning this repository and add their email address for API calls.
+* The users can now view it when cloning this repository and add their email address for API calls.  
 
 
 ## **Project Structure**
