@@ -50,5 +50,5 @@ reactome_downloader/
 6. This is followed by sub-folders for .json, .pdf and .png files.
 
 # Dependencies required
-Python version = 3.8.2
-Package = requests
+* Python version = 3.8.2
+* Package = requests
